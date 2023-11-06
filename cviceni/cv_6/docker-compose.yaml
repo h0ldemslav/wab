@@ -1,0 +1,25 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+
+  db:
+    image: postgres
+    # restart: always # nechichi, vytvari mi novou db!
+    environment:
+      POSTGRES_PASSWORD: example
+    volumes:
+    # namapujeme cely adresar a read only (ro)
+      - ./postgres/initdb.d:/docker-entrypoint-initdb.d:ro
+    ports:
+      - 5432:5432
+
+  adminer:
+    image: adminer
+    # restart: always
+    # adminer se spusti, az se spusti db
+    depends_on:
+      - db
+    ports:
+    # na lokal hostu bude 5000 a napoji se na 8080 
+      - 5000:8080

@@ -1,0 +1,21 @@
+### Definice promenne
+@host = http://localhost:8000
+
+### GET Review list
+### Definujeme, co bychom chteli poslat na server
+### Accept - toto poslu na server
+GET {{host}}/review
+Accept: application/json
+
+### POST Create new review
+POST {{host}}/review
+Content-Type: application/json
+
+### definujeme JSON
+### id bude UUID
+{
+    "coffee_shop_id": "3559dbec-d500-4e6e-ac6d-812a66c4dc40",
+    "user_id": "bb79fb9d-99be-45c3-89a1-9e30c95c9544",
+    "rating": 3,
+    "description": "Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua."
+}

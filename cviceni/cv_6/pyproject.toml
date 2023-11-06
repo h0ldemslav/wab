@@ -1,0 +1,17 @@
+[project]
+name = "Coffee-Shop-Reviews"
+version = "1.0"
+description = ""
+authors = [
+    {name = "Daniil Astapenko", email = "xastapen@mendelu.cz"},
+]
+dependencies = [
+    "fastapi>=0.104.1",
+    "uvicorn[standard]>=0.24.0.post1",
+]
+requires-python = ">=3.11"
+readme = "README.md"
+license = {text = "MIT"}
+
+[tool.pdm.scripts]
+dev = "uvicorn src.main:app --reload"
