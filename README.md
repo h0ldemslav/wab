@@ -50,3 +50,12 @@ Spuštění scriptu
 ```shell
 pdm run dev
 ```
+
+Přidání dependencies (použije se soubor `pdm.lock`, případně `pyproject.toml`, kde máš seznam dependecies)
+```shell
+pdm install
+```
+
+**Kam se instalují ty dependencies?** Z dokumentace:
+
+**Virtual environments will be used if the project interpreter (the interpreter stored in `.pdm-python`, which can be checked by `pdm info`) is from a virtualenv.** ([zdroj](https://pdm-project.org/latest/usage/venv/))
