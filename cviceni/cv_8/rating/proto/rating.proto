@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+service RatingService {
+    // Definice endpointu
+    rpc lastRating (LastRatingRequest) returns (LastRatingResponse);
+}
+
+// Vytvorime zpravu, bude to posilame jako 
+message LastRatingRequest {
+    // Typ, nazev a hodnota (poradi)
+    string coffee_shop_id = 1;
+    int32 amount = 2;
+}
+
+message RatingMessage {
+    string date = 1;
+    double value = 2;
+}
+
+message LastRatingResponse {
+    // seznam ratingu
+    repeated RatingMessage ratings = 1;
+}

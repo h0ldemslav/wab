@@ -1,0 +1,20 @@
+[project]
+name = "coffee_shop"
+version = "1.0"
+description = ""
+authors = [
+    {name = "Daniil Astapenko", email = "xastapen@mendelu.cz"},
+]
+dependencies = [
+    "fastapi>=0.104.1",
+    "uvicorn[standard]>=0.24.0.post1",
+    "grpcio>=1.59.3",
+    "grpcio-tools>=1.59.3",
+]
+requires-python = ">=3.11"
+readme = "README.md"
+license = {text = "MIT"}
+
+[tool.pdm.scripts]
+dev = "uvicorn src.main:app --reload"
+grpc = "python -m grpc_tools.protoc -I./proto/ --python_out=./src --pyi_out=./src  --grpc_python_out=./src ./proto/rating.proto"
