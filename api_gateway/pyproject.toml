@@ -1,5 +1,5 @@
 [project]
-name = "itinerary_service"
+name = "api_gateway"
 version = "1.0.0"
 description = ""
 authors = [
