@@ -1,26 +1,27 @@
-import httpx
-from fastapi import FastAPI, Request, HTTPException
+import json
+from fastapi import FastAPI, Request
 from fastapi.responses import RedirectResponse
 from auth import setup_auth
+from redisclient import RedisClient
 
 app = FastAPI()
+redis_client = RedisClient()
 
 oauth = setup_auth(app)
 oauth_data = {}
-auth_service_urls = {
+auth_service_routes = {
     "base": "http://127.0.0.1:8001",
     "login": "http://127.0.0.1:8001/login",
     "token": "http://127.0.0.1:8001/token"
 }
-api_gateway_urls = {
+api_gateway_routes = {
     "base": "http://127.0.0.1:8000",
-    "home": "http://127.0.0.1:8000/home",
-    "process_token": "http://127.0.0.1:8000/process_token"
+    "home": "http://127.0.0.1:8000/home"
 }
 
 @app.get("/login")
 async def login(request: Request):
-    return await oauth.google.authorize_redirect(request, auth_service_urls["token"])
+    return await oauth.google.authorize_redirect(request, auth_service_routes["token"])
 
 @app.get(
     path="/token",
@@ -29,21 +30,22 @@ async def login(request: Request):
 async def token(request: Request):
     try:
         token_data = await oauth.google.authorize_access_token(request)
-        oauth_data.update(token_data)
+        user_email = token_data["userinfo"]["email"]
 
-        redirect_url = api_gateway_urls["home"]
+        redis_client.set_token(user_email, token_data)
 
-        await send_token_to_api_gateway(token_data)
+        response = RedirectResponse(url=api_gateway_routes["home"])
+        response.set_cookie(key="google_token", value=json.dumps(token_data), secure=True, httponly=True)
 
-        return RedirectResponse(url=redirect_url)
+        return response
     except Exception:
-        return RedirectResponse(url=api_gateway_urls["base"])
+        return RedirectResponse(url=api_gateway_routes["base"])
 
-async def send_token_to_api_gateway(access_token: str):
-    headers = { "Content-Type": "application/json" }
+@app.post("/delete_token")
+async def logout(request: Request):
+    user_email = await request.body()
 
-    async with httpx.AsyncClient() as client:
-        response = await client.post(api_gateway_urls["process_token"], json=access_token, headers=headers)
+    if not user_email:
+        return RedirectResponse(url=api_gateway_routes["base"]) 
 
-    if response.status_code != 200:
-        raise HTTPException(status_code=response.status_code, detail="Failed to send token to API Gateway")
+    redis_client.delete_token(user_email)
