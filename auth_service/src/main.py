@@ -10,7 +10,6 @@ app = FastAPI()
 redis_client = RedisClient()
 
 oauth = setup_auth(app)
-oauth_data = {}
 auth_service_routes = {
     "base": "http://127.0.0.1:8001",
     "login": "http://127.0.0.1:8001/login",
@@ -62,3 +61,18 @@ async def logout(request: Request):
         return bad_response
 
     redis_client.delete_token(user_email)
+
+@app.post("/validate_token")
+async def validate_token(request: Request):
+    try:
+        google_token: dict = await request.json()
+        user_email = google_token.get("userinfo").get("email")
+    except (json.JSONDecodeError, AttributeError):
+        return Response(status_code=401)
+    
+    cached_token = redis_client.get_token(user_email)
+
+    if not cached_token or cached_token.get("id_token") != google_token.get("id_token"):
+        return Response(status_code=403)
+    
+    return Response(status_code=200)

@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package itinerary;
+
+service ItineraryService {
+    rpc GetTravelPlans (Token) returns (TravelPlanResponse);
+}
+
+message TravelPlan {
+  string id = 1;
+  string title = 2;
+  string location_name = 3;
+  double location_lat = 4;
+  double location_long = 5;
+  int64 arrival_date = 6;
+  int64 departure_date = 7;
+  string user_email = 8;
+}
+
+message TravelPlanResponse {
+  repeated TravelPlan data = 1;
+}
+
+message Token {
+  string token = 1;
+}

@@ -1,8 +1,10 @@
+import grpc
 import httpx
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
-from model import TravelPlanResponse, Token
+from grpc_output.itinerary_pb2 import Token, TravelPlanResponse
+from grpc_output.itinerary_pb2_grpc import ItineraryServiceStub
 
 app = FastAPI()
 templates = Jinja2Templates(directory="src/templates")
@@ -74,17 +76,19 @@ async def logout(request: Request):
 async def get_travel_plans(request: Request):
     google_token_json = request.cookies.get(cookies_keys["google_token"])
 
-    validate_token_schema(google_token_json)
+    with grpc.insecure_channel("localhost:50051") as channel:
+        stub = ItineraryServiceStub(channel)
 
-    async with httpx.AsyncClient() as client:
-        response = await client.post(itinerary_service_urls["travel_plans"], content=google_token_json)
-        travel_plan_response = convert_json_to_travel_plan_response(response.content)
-        
-        return templates.TemplateResponse(
-            request=request,
-            name="travel_plans.html",
-            context={ "travel_plans": travel_plan_response.data }
-        )
+        try:
+            response = stub.GetTravelPlans(Token(token=google_token_json))
+            
+            return templates.TemplateResponse(
+                request=request, 
+                name="travel_plans.html",
+                context={ "travel_plans": response.data }
+            )
+        except grpc.RpcError:
+            raise HTTPException(status_code=401)
 
 def convert_json_to_travel_plan_response(json: str) -> TravelPlanResponse:
     try:
