@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Travel plans</h1>
+    <div>
+        <a href="#">Create new plan</a>
+    </div>
+    <ul class="travel-plans">
+        {% for item in travel_plans %}
+            <li><a href="#">{{ item.title }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}

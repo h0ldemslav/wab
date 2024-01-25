@@ -1,0 +1,17 @@
+[project]
+name = "itinerary_service"
+version = "1.0.0"
+description = ""
+authors = [
+    {name = "Daniil Astapenko", email = "xastapen@mendelu.cz"},
+]
+dependencies = [
+    "fastapi>=0.109.0",
+    "uvicorn[standard]>=0.26.0",
+]
+requires-python = ">=3.11"
+readme = "README.md"
+license = {text = "MIT"}
+
+[tool.pdm.scripts]
+dev = "uvicorn src.main:app --reload --port 8002"
