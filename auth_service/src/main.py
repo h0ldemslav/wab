@@ -1,5 +1,5 @@
 import json
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, Response, HTTPException
 from fastapi.responses import RedirectResponse
 from auth import setup_auth
 from redisclient import RedisClient
@@ -50,7 +50,7 @@ async def token(request: Request):
 async def logout(request: Request):
     user_email = await request.body()
 
-    if not user_email:
-        return RedirectResponse(url=api_gateway_routes["base"]) 
+    if not redis_client.exists(user_email.decode("utf-8")):
+        return Response(status_code=400, content="Fail to logout: invalid request data") 
 
     redis_client.delete_token(user_email)
