@@ -1,8 +1,10 @@
 import json
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import RedirectResponse
 from auth import setup_auth
 from redisclient import RedisClient
+from authlib.integrations.base_client.errors import MismatchingStateError
+from redis.exceptions import ConnectionError
 
 app = FastAPI()
 redis_client = RedisClient()
@@ -38,8 +40,11 @@ async def token(request: Request):
         response.set_cookie(key="google_token", value=json.dumps(token_data), secure=True, httponly=True)
 
         return response
-    except Exception:
+    except MismatchingStateError:
         return RedirectResponse(url=api_gateway_routes["base"])
+    except ConnectionError:
+        # Redis is down
+        raise HTTPException(status_code=500, detail="Server data storage is down")
 
 @app.post("/delete_token")
 async def logout(request: Request):
