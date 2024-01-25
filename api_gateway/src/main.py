@@ -50,17 +50,11 @@ async def logout(request: Request):
     google_token_json = request.cookies.get(cookies_keys["google_token"])
 
     if not google_token_json:
-        return RedirectResponse(url=api_gateway_routes["base"])
-
-    try:
-        google_token: dict = json.loads(google_token_json)
-        user_email = google_token.get("userinfo").get("email")
-    except (json.JSONDecodeError, AttributeError):
-        raise HTTPException(status_code=400, detail="Fail to logout: bad token")
+        raise HTTPException(status_code=400, detail="Fail to logout: invalid cookie")
 
     async with httpx.AsyncClient() as client:
         try:
-            response = await client.post(auth_service_urls["delete_token"], content=user_email)
+            response = await client.post(auth_service_urls["delete_token"], content=google_token_json)
         except Exception:
             raise HTTPException(status_code=500, detail="Fail to logout")
         

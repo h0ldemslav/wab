@@ -14,11 +14,15 @@ class RedisClient:
 
         self.redis_client.set(key, json_object)
 
-    def get_token(self, email: str) -> dict:
+    def get_token(self, email: str) -> dict | None:
         key = self.get_unique_key(email)
         token_data = self.redis_client.get(key)
 
-        return json.loads(token_data)
+        try:
+            token = json.loads(token_data)
+            return token
+        except (json.JSONDecodeError, TypeError):
+            return None
 
     def delete_token(self, email: str):
         key = self.get_unique_key(email)
