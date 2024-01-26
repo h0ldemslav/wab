@@ -3,7 +3,8 @@ syntax = "proto3";
 package itinerary;
 
 service ItineraryService {
-    rpc GetTravelPlans (Token) returns (TravelPlanResponse);
+  rpc GetTravelPlans (Token) returns (TravelPlanResponse);
+  rpc CreateTravelPlan (TokenWithTravelPlan) returns (TravelPlan);
 }
 
 message TravelPlan {
@@ -23,5 +24,19 @@ message TravelPlanResponse {
 }
 
 message Token {
-  string token = 1;
+  string access_token = 1;
+  string token_type = 2;
+  string id_token = 3;
+  int64 expires_at = 4;
+  UserInfo userinfo = 5;
+}
+
+message UserInfo {
+  string email = 1;
+  string name = 2;
+}
+
+message TokenWithTravelPlan {
+  Token token = 1;
+  TravelPlan travel_plan = 2;
 }

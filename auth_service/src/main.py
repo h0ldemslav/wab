@@ -47,18 +47,16 @@ async def token(request: Request):
 
 @app.post("/delete_token")
 async def logout(request: Request):
-    bad_response = Response(status_code=400, content="Fail to logout: invalid request data") 
-
     try:
         google_token: dict = await request.json()
         user_email = google_token.get("userinfo").get("email")
     except (json.JSONDecodeError, AttributeError):
-        return bad_response
+        return Response(status_code=400, content="Fail to logout: invalid request data") 
 
     cached_token = redis_client.get_token(user_email)
 
     if not cached_token or cached_token.get("id_token") != google_token.get("id_token"):
-        return bad_response
+        return Response(status_code=403, content="Fail to logout: invalid token") 
 
     redis_client.delete_token(user_email)
 

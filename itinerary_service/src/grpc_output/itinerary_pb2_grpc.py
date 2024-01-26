@@ -19,12 +19,23 @@ class ItineraryServiceStub(object):
                 request_serializer=itinerary__pb2.Token.SerializeToString,
                 response_deserializer=itinerary__pb2.TravelPlanResponse.FromString,
                 )
+        self.CreateTravelPlan = channel.unary_unary(
+                '/itinerary.ItineraryService/CreateTravelPlan',
+                request_serializer=itinerary__pb2.TokenWithTravelPlan.SerializeToString,
+                response_deserializer=itinerary__pb2.TravelPlan.FromString,
+                )
 
 
 class ItineraryServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def GetTravelPlans(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CreateTravelPlan(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -37,6 +48,11 @@ def add_ItineraryServiceServicer_to_server(servicer, server):
                     servicer.GetTravelPlans,
                     request_deserializer=itinerary__pb2.Token.FromString,
                     response_serializer=itinerary__pb2.TravelPlanResponse.SerializeToString,
+            ),
+            'CreateTravelPlan': grpc.unary_unary_rpc_method_handler(
+                    servicer.CreateTravelPlan,
+                    request_deserializer=itinerary__pb2.TokenWithTravelPlan.FromString,
+                    response_serializer=itinerary__pb2.TravelPlan.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -62,5 +78,22 @@ class ItineraryService(object):
         return grpc.experimental.unary_unary(request, target, '/itinerary.ItineraryService/GetTravelPlans',
             itinerary__pb2.Token.SerializeToString,
             itinerary__pb2.TravelPlanResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def CreateTravelPlan(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/itinerary.ItineraryService/CreateTravelPlan',
+            itinerary__pb2.TokenWithTravelPlan.SerializeToString,
+            itinerary__pb2.TravelPlan.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

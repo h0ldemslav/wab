@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="{{ url_for('create_travel_plan') }}" method="POST" class="new-travel-plan">
+        <div class="input-wrapper">
+            <label for="title" class="input-wrapper__label">Title</label>
+            <input id="title" type="text" name="title" class="input-wrapper__input" required>
+        </div>
+        <div class="input-wrapper">
+            <label for="desc" class="input-wrapper__label">Description</label>
+            <textarea name="desc" id="desc" cols="30" rows="10" required></textarea>
+        </div>
+        <div class="button-wrapper">
+            <button>Submit</button>
+        </div>
+    </form>
+{% endblock %}

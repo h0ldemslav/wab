@@ -34,7 +34,31 @@ class TravelPlanResponse(_message.Message):
     def __init__(self, data: _Optional[_Iterable[_Union[TravelPlan, _Mapping]]] = ...) -> None: ...
 
 class Token(_message.Message):
-    __slots__ = ("token",)
+    __slots__ = ("access_token", "token_type", "id_token", "expires_at", "userinfo")
+    ACCESS_TOKEN_FIELD_NUMBER: _ClassVar[int]
+    TOKEN_TYPE_FIELD_NUMBER: _ClassVar[int]
+    ID_TOKEN_FIELD_NUMBER: _ClassVar[int]
+    EXPIRES_AT_FIELD_NUMBER: _ClassVar[int]
+    USERINFO_FIELD_NUMBER: _ClassVar[int]
+    access_token: str
+    token_type: str
+    id_token: str
+    expires_at: int
+    userinfo: UserInfo
+    def __init__(self, access_token: _Optional[str] = ..., token_type: _Optional[str] = ..., id_token: _Optional[str] = ..., expires_at: _Optional[int] = ..., userinfo: _Optional[_Union[UserInfo, _Mapping]] = ...) -> None: ...
+
+class UserInfo(_message.Message):
+    __slots__ = ("email", "name")
+    EMAIL_FIELD_NUMBER: _ClassVar[int]
+    NAME_FIELD_NUMBER: _ClassVar[int]
+    email: str
+    name: str
+    def __init__(self, email: _Optional[str] = ..., name: _Optional[str] = ...) -> None: ...
+
+class TokenWithTravelPlan(_message.Message):
+    __slots__ = ("token", "travel_plan")
     TOKEN_FIELD_NUMBER: _ClassVar[int]
-    token: str
-    def __init__(self, token: _Optional[str] = ...) -> None: ...
+    TRAVEL_PLAN_FIELD_NUMBER: _ClassVar[int]
+    token: Token
+    travel_plan: TravelPlan
+    def __init__(self, token: _Optional[_Union[Token, _Mapping]] = ..., travel_plan: _Optional[_Union[TravelPlan, _Mapping]] = ...) -> None: ...
