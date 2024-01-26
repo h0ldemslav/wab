@@ -19,11 +19,7 @@ class ItineraryServiceServicerImpl(ItineraryServiceServicer):
         travel_plan = TravelPlan(
             id=str(uuid4()),
             title="Foo",
-            location_name="Praha",
-            location_lat=49,
-            location_long=16,
-            arrival_date=int(datetime(2024, 1, 31).timestamp()),
-            departure_date=int(datetime(2024, 2, 1).timestamp()),
+            description="The most beautiful place!",
             user_email="bar@example.com"
         )
 

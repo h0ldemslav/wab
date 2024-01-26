@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0fitinerary.proto\x12\titinerary\"\xad\x01\n\nTravelPlan\x12\n\n\x02id\x18\x01 \x01(\t\x12\r\n\x05title\x18\x02 \x01(\t\x12\x15\n\rlocation_name\x18\x03 \x01(\t\x12\x14\n\x0clocation_lat\x18\x04 \x01(\x01\x12\x15\n\rlocation_long\x18\x05 \x01(\x01\x12\x14\n\x0c\x61rrival_date\x18\x06 \x01(\x03\x12\x16\n\x0e\x64\x65parture_date\x18\x07 \x01(\x03\x12\x12\n\nuser_email\x18\x08 \x01(\t\"9\n\x12TravelPlanResponse\x12#\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32\x15.itinerary.TravelPlan\"\x16\n\x05Token\x12\r\n\x05token\x18\x01 \x01(\t2U\n\x10ItineraryService\x12\x41\n\x0eGetTravelPlans\x12\x10.itinerary.Token\x1a\x1d.itinerary.TravelPlanResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0fitinerary.proto\x12\titinerary\"\xb4\x02\n\nTravelPlan\x12\n\n\x02id\x18\x01 \x01(\t\x12\r\n\x05title\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x1a\n\rlocation_name\x18\x04 \x01(\tH\x00\x88\x01\x01\x12\x19\n\x0clocation_lat\x18\x05 \x01(\x01H\x01\x88\x01\x01\x12\x1a\n\rlocation_long\x18\x06 \x01(\x01H\x02\x88\x01\x01\x12\x19\n\x0c\x61rrival_date\x18\x07 \x01(\x03H\x03\x88\x01\x01\x12\x1b\n\x0e\x64\x65parture_date\x18\x08 \x01(\x03H\x04\x88\x01\x01\x12\x12\n\nuser_email\x18\t \x01(\tB\x10\n\x0e_location_nameB\x0f\n\r_location_latB\x10\n\x0e_location_longB\x0f\n\r_arrival_dateB\x11\n\x0f_departure_date\"9\n\x12TravelPlanResponse\x12#\n\x04\x64\x61ta\x18\x01 \x03(\x0b\x32\x15.itinerary.TravelPlan\"\x16\n\x05Token\x12\r\n\x05token\x18\x01 \x01(\t2U\n\x10ItineraryService\x12\x41\n\x0eGetTravelPlans\x12\x10.itinerary.Token\x1a\x1d.itinerary.TravelPlanResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -22,11 +22,11 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'itinerary_pb2', _globals)
 if _descriptor._USE_C_DESCRIPTORS == False:
   DESCRIPTOR._options = None
   _globals['_TRAVELPLAN']._serialized_start=31
-  _globals['_TRAVELPLAN']._serialized_end=204
-  _globals['_TRAVELPLANRESPONSE']._serialized_start=206
-  _globals['_TRAVELPLANRESPONSE']._serialized_end=263
-  _globals['_TOKEN']._serialized_start=265
-  _globals['_TOKEN']._serialized_end=287
-  _globals['_ITINERARYSERVICE']._serialized_start=289
-  _globals['_ITINERARYSERVICE']._serialized_end=374
+  _globals['_TRAVELPLAN']._serialized_end=339
+  _globals['_TRAVELPLANRESPONSE']._serialized_start=341
+  _globals['_TRAVELPLANRESPONSE']._serialized_end=398
+  _globals['_TOKEN']._serialized_start=400
+  _globals['_TOKEN']._serialized_end=422
+  _globals['_ITINERARYSERVICE']._serialized_start=424
+  _globals['_ITINERARYSERVICE']._serialized_end=509
 # @@protoc_insertion_point(module_scope)

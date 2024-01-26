@@ -6,9 +6,10 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class TravelPlan(_message.Message):
-    __slots__ = ("id", "title", "location_name", "location_lat", "location_long", "arrival_date", "departure_date", "user_email")
+    __slots__ = ("id", "title", "description", "location_name", "location_lat", "location_long", "arrival_date", "departure_date", "user_email")
     ID_FIELD_NUMBER: _ClassVar[int]
     TITLE_FIELD_NUMBER: _ClassVar[int]
+    DESCRIPTION_FIELD_NUMBER: _ClassVar[int]
     LOCATION_NAME_FIELD_NUMBER: _ClassVar[int]
     LOCATION_LAT_FIELD_NUMBER: _ClassVar[int]
     LOCATION_LONG_FIELD_NUMBER: _ClassVar[int]
@@ -17,13 +18,14 @@ class TravelPlan(_message.Message):
     USER_EMAIL_FIELD_NUMBER: _ClassVar[int]
     id: str
     title: str
+    description: str
     location_name: str
     location_lat: float
     location_long: float
     arrival_date: int
     departure_date: int
     user_email: str
-    def __init__(self, id: _Optional[str] = ..., title: _Optional[str] = ..., location_name: _Optional[str] = ..., location_lat: _Optional[float] = ..., location_long: _Optional[float] = ..., arrival_date: _Optional[int] = ..., departure_date: _Optional[int] = ..., user_email: _Optional[str] = ...) -> None: ...
+    def __init__(self, id: _Optional[str] = ..., title: _Optional[str] = ..., description: _Optional[str] = ..., location_name: _Optional[str] = ..., location_lat: _Optional[float] = ..., location_long: _Optional[float] = ..., arrival_date: _Optional[int] = ..., departure_date: _Optional[int] = ..., user_email: _Optional[str] = ...) -> None: ...
 
 class TravelPlanResponse(_message.Message):
     __slots__ = ("data",)
