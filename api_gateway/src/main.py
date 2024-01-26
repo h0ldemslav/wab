@@ -140,7 +140,6 @@ async def create_travel_plan(
     with grpc.insecure_channel("localhost:50051") as channel:
         stub = ItineraryServiceStub(channel)
         travel_plan = TravelPlan(
-            id="",
             title=title,
             description=desc,
             user_email=google_token.userinfo.email
