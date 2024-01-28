@@ -4,7 +4,10 @@ package itinerary;
 
 service ItineraryService {
   rpc GetTravelPlans (Token) returns (TravelPlanResponse);
+  rpc GetTravelPlanById (TokenWithTravelPlanId) returns (TravelPlan);
   rpc CreateTravelPlan (TokenWithTravelPlan) returns (TravelPlan);
+  rpc UpdateTravelPlanById (TokenWithTravelPlan) returns (TravelPlan);
+  rpc DeleteTravelPlanById (TokenWithTravelPlanId) returns (Empty);
 }
 
 message TravelPlan {
@@ -39,4 +42,13 @@ message UserInfo {
 message TokenWithTravelPlan {
   Token token = 1;
   TravelPlan travel_plan = 2;
+}
+
+message TokenWithTravelPlanId {
+  Token token = 1;
+  string travelPlanId = 2;
+}
+
+message Empty {
+
 }

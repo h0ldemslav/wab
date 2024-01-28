@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block head %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const deleteButton = document.getElementById("deleteButton");
+    deleteButton.addEventListener("click", () => {
+        let errorMessageDiv = document.getElementById("error");
+        const baseUrl = "http://127.0.0.1:8000/travel_plans";
+        
+        fetch(`${baseUrl}/plan/{{ travel_plan.id }}`, { method: "DELETE" })
+            .then(response => {
+                if (!response.ok) {
+                    throw Error(response.statusText)
+                }
+
+                errorMessageDiv = null;
+                window.location.href = baseUrl;
+            })
+            .catch(error => {
+                if (errorMessageDiv == null) {
+                    const errorMessageDiv = document.createElement("div");
+                    errorMessageDiv.id = "error";
+                    errorMessageDiv.textContent = `Failed to delete travel plan. ${error}`;
+                    document.body.appendChild(errorMessageDiv);
+                }
+            });
+    });
+});
+</script>
+{% endblock %}
+{% block content %}
+    <div>
+        <a href="{{ url_for('get_travel_plans') }}">Travel plans</a>
+    </div>
+    <h1>{{ travel_plan.title }}</h1>
+    <p>{{ travel_plan.description }}</p>
+    <div>
+        <button id="deleteButton" type="button">Delete</button>
+    </div>
+{% endblock %}

@@ -62,3 +62,15 @@ class TokenWithTravelPlan(_message.Message):
     token: Token
     travel_plan: TravelPlan
     def __init__(self, token: _Optional[_Union[Token, _Mapping]] = ..., travel_plan: _Optional[_Union[TravelPlan, _Mapping]] = ...) -> None: ...
+
+class TokenWithTravelPlanId(_message.Message):
+    __slots__ = ("token", "travelPlanId")
+    TOKEN_FIELD_NUMBER: _ClassVar[int]
+    TRAVELPLANID_FIELD_NUMBER: _ClassVar[int]
+    token: Token
+    travelPlanId: str
+    def __init__(self, token: _Optional[_Union[Token, _Mapping]] = ..., travelPlanId: _Optional[str] = ...) -> None: ...
+
+class Empty(_message.Message):
+    __slots__ = ()
+    def __init__(self) -> None: ...

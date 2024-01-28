@@ -10,7 +10,7 @@
     </div>
     <ul class="travel-plans">
         {% for item in travel_plans %}
-            <li><a href="#">{{ item.title }}</a></li>
+            <li><a href="{{ url_for('get_travel_plan_by_id', id=item.id) }}">{{ item.title }}</a></li>
         {% endfor %}
     </ul>
 {% endblock %}

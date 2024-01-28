@@ -17,21 +17,18 @@ class ItineraryServiceServicerImpl(ItineraryServiceServicer):
         grpc_travel_plans: List[itinerary_pb2.TravelPlan] = []
 
         for item in db_travel_plans:
-            grpc_travel_plan = itinerary_pb2.TravelPlan(
-                id=item.id,
-                title=item.title,
-                description=item.description,
-                location_name=item.location_name,
-                location_lat=item.location_lat,
-                location_long=item.location_long,
-                arrival_date=item.arrival_date,
-                departure_date=item.departure_date,
-                user_email=item.user_email
-            )
-
+            grpc_travel_plan = self.convert_db_travel_plan_to_grpc(item)
             grpc_travel_plans.append(grpc_travel_plan)
 
         return itinerary_pb2.TravelPlanResponse(data=grpc_travel_plans)
+    
+    def GetTravelPlanById(self, request, context):
+        self.validate_token(request.token, context)
+
+        db_travel_plan: schemas.TravelPlan = self.db_client.get_travel_plan_by_id(request.travelPlanId)
+        grpc_travel_plan = self.convert_db_travel_plan_to_grpc(db_travel_plan)
+
+        return grpc_travel_plan
     
     def CreateTravelPlan(self, request, context):
         self.validate_token(request.token, context)
@@ -44,7 +41,13 @@ class ItineraryServiceServicerImpl(ItineraryServiceServicer):
             user_email=grpc_travel_plan.user_email
         ))
 
-        return grpc_travel_plan      
+        return grpc_travel_plan
+
+    def DeleteTravelPlanById(self, request, context):
+        self.validate_token(request.token, context)
+        self.db_client.delete_travel_plan_by_id(request.travelPlanId)
+
+        return itinerary_pb2.Empty()
 
     def validate_token(self, token: itinerary_pb2.Token, context):
         auth_service_url = "http://127.0.0.1:8001/validate_token"
@@ -62,3 +65,16 @@ class ItineraryServiceServicerImpl(ItineraryServiceServicer):
 
         if response.status_code != 200:
             context.abort(grpc.StatusCode.UNAUTHENTICATED, "Invalid token")
+    
+    def convert_db_travel_plan_to_grpc(self, travel_plan: schemas.TravelPlan) -> itinerary_pb2.TravelPlan:
+        return itinerary_pb2.TravelPlan(
+            id=travel_plan.id,
+            title=travel_plan.title,
+            description=travel_plan.description,
+            location_name=travel_plan.location_name,
+            location_lat=travel_plan.location_lat,
+            location_long=travel_plan.location_long,
+            arrival_date=travel_plan.arrival_date,
+            departure_date=travel_plan.departure_date,
+            user_email=travel_plan.user_email
+        )

@@ -47,6 +47,19 @@ class DbClient:
 
             return travel_plans
 
+    def get_travel_plan_by_id(self, id: str) -> TravelPlan:
+        with self.conn.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT * FROM travel_plans WHERE id=%s
+                """,
+                (id,)
+            )
+            row = cursor.fetchone()
+            travel_plan = TravelPlan(*row)
+
+            return travel_plan
+
     def create_new_travel_plan(self, travel_plan: TravelPlan):
         with self.conn.cursor() as cursor:
             cursor.execute(
@@ -74,6 +87,17 @@ class DbClient:
                     travel_plan.departure_date,
                     travel_plan.user_email
                 )
+            )
+
+            self.conn.commit()
+    
+    def delete_travel_plan_by_id(self, id: str):
+        with self.conn.cursor() as cursor:
+            cursor.execute(
+                """
+                DELETE FROM travel_plans WHERE id=%s
+                """,
+                (id,)
             )
 
             self.conn.commit()

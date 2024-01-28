@@ -19,10 +19,25 @@ class ItineraryServiceStub(object):
                 request_serializer=itinerary__pb2.Token.SerializeToString,
                 response_deserializer=itinerary__pb2.TravelPlanResponse.FromString,
                 )
+        self.GetTravelPlanById = channel.unary_unary(
+                '/itinerary.ItineraryService/GetTravelPlanById',
+                request_serializer=itinerary__pb2.TokenWithTravelPlanId.SerializeToString,
+                response_deserializer=itinerary__pb2.TravelPlan.FromString,
+                )
         self.CreateTravelPlan = channel.unary_unary(
                 '/itinerary.ItineraryService/CreateTravelPlan',
                 request_serializer=itinerary__pb2.TokenWithTravelPlan.SerializeToString,
                 response_deserializer=itinerary__pb2.TravelPlan.FromString,
+                )
+        self.UpdateTravelPlanById = channel.unary_unary(
+                '/itinerary.ItineraryService/UpdateTravelPlanById',
+                request_serializer=itinerary__pb2.TokenWithTravelPlan.SerializeToString,
+                response_deserializer=itinerary__pb2.TravelPlan.FromString,
+                )
+        self.DeleteTravelPlanById = channel.unary_unary(
+                '/itinerary.ItineraryService/DeleteTravelPlanById',
+                request_serializer=itinerary__pb2.TokenWithTravelPlanId.SerializeToString,
+                response_deserializer=itinerary__pb2.Empty.FromString,
                 )
 
 
@@ -35,7 +50,25 @@ class ItineraryServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetTravelPlanById(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def CreateTravelPlan(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UpdateTravelPlanById(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeleteTravelPlanById(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -49,10 +82,25 @@ def add_ItineraryServiceServicer_to_server(servicer, server):
                     request_deserializer=itinerary__pb2.Token.FromString,
                     response_serializer=itinerary__pb2.TravelPlanResponse.SerializeToString,
             ),
+            'GetTravelPlanById': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetTravelPlanById,
+                    request_deserializer=itinerary__pb2.TokenWithTravelPlanId.FromString,
+                    response_serializer=itinerary__pb2.TravelPlan.SerializeToString,
+            ),
             'CreateTravelPlan': grpc.unary_unary_rpc_method_handler(
                     servicer.CreateTravelPlan,
                     request_deserializer=itinerary__pb2.TokenWithTravelPlan.FromString,
                     response_serializer=itinerary__pb2.TravelPlan.SerializeToString,
+            ),
+            'UpdateTravelPlanById': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdateTravelPlanById,
+                    request_deserializer=itinerary__pb2.TokenWithTravelPlan.FromString,
+                    response_serializer=itinerary__pb2.TravelPlan.SerializeToString,
+            ),
+            'DeleteTravelPlanById': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteTravelPlanById,
+                    request_deserializer=itinerary__pb2.TokenWithTravelPlanId.FromString,
+                    response_serializer=itinerary__pb2.Empty.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -82,6 +130,23 @@ class ItineraryService(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
+    def GetTravelPlanById(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/itinerary.ItineraryService/GetTravelPlanById',
+            itinerary__pb2.TokenWithTravelPlanId.SerializeToString,
+            itinerary__pb2.TravelPlan.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
     def CreateTravelPlan(request,
             target,
             options=(),
@@ -95,5 +160,39 @@ class ItineraryService(object):
         return grpc.experimental.unary_unary(request, target, '/itinerary.ItineraryService/CreateTravelPlan',
             itinerary__pb2.TokenWithTravelPlan.SerializeToString,
             itinerary__pb2.TravelPlan.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def UpdateTravelPlanById(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/itinerary.ItineraryService/UpdateTravelPlanById',
+            itinerary__pb2.TokenWithTravelPlan.SerializeToString,
+            itinerary__pb2.TravelPlan.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def DeleteTravelPlanById(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/itinerary.ItineraryService/DeleteTravelPlanById',
+            itinerary__pb2.TokenWithTravelPlanId.SerializeToString,
+            itinerary__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
