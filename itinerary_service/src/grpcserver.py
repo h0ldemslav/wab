@@ -49,6 +49,13 @@ class ItineraryServiceServicerImpl(ItineraryServiceServicer):
 
         return itinerary_pb2.Empty()
 
+    def UpdateTravelPlanById(self, request, context):
+        self.validate_token(request.token, context)
+        db_travel_plan: schemas.TravelPlan = self.convert_grpc_to_db_travel_plan(request.travel_plan)
+        self.db_client.update_travel_plan(db_travel_plan)
+
+        return request.travel_plan
+
     def validate_token(self, token: itinerary_pb2.Token, context):
         auth_service_url = "http://127.0.0.1:8001/validate_token"
         token = {
@@ -68,6 +75,19 @@ class ItineraryServiceServicerImpl(ItineraryServiceServicer):
     
     def convert_db_travel_plan_to_grpc(self, travel_plan: schemas.TravelPlan) -> itinerary_pb2.TravelPlan:
         return itinerary_pb2.TravelPlan(
+            id=travel_plan.id,
+            title=travel_plan.title,
+            description=travel_plan.description,
+            location_name=travel_plan.location_name,
+            location_lat=travel_plan.location_lat,
+            location_long=travel_plan.location_long,
+            arrival_date=travel_plan.arrival_date,
+            departure_date=travel_plan.departure_date,
+            user_email=travel_plan.user_email
+        )
+    
+    def convert_grpc_to_db_travel_plan(self, travel_plan: itinerary_pb2.TravelPlan):
+        return schemas.TravelPlan(
             id=travel_plan.id,
             title=travel_plan.title,
             description=travel_plan.description,

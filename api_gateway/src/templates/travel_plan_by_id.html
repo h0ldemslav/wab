@@ -2,29 +2,71 @@
 {% block head %}
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+    const baseUrl = "http://127.0.0.1:8000/travel_plans";
     const deleteButton = document.getElementById("deleteButton");
-    deleteButton.addEventListener("click", () => {
-        let errorMessageDiv = document.getElementById("error");
-        const baseUrl = "http://127.0.0.1:8000/travel_plans";
-        
+    const updateButton = document.getElementById("updateButton");
+
+    deleteButton.addEventListener("click", () => {    
         fetch(`${baseUrl}/plan/{{ travel_plan.id }}`, { method: "DELETE" })
             .then(response => {
                 if (!response.ok) {
                     throw Error(response.statusText)
                 }
-
-                errorMessageDiv = null;
+                
                 window.location.href = baseUrl;
             })
             .catch(error => {
-                if (errorMessageDiv == null) {
-                    const errorMessageDiv = document.createElement("div");
-                    errorMessageDiv.id = "error";
-                    errorMessageDiv.textContent = `Failed to delete travel plan. ${error}`;
-                    document.body.appendChild(errorMessageDiv);
-                }
+                addErrorMessage("Failed to delete.", error);
             });
     });
+
+    updateButton.addEventListener("click", () => {
+        const inputTitle = document.getElementById("travel_plan_title");
+        const inputDesc = document.getElementById("travel_plan_desc");
+        const requestBody = JSON.stringify({
+            id: "{{ travel_plan.id }}",
+            title: inputTitle.value,
+            description: inputDesc.value,
+            location_name: "{{ travel_plan.location_name }}",
+            location_lat: "{{ travel_plan.location_lat }}",
+            location_long: "{{ travel_plan.location_long }}",
+            arrival_date: "{{ travel_plan.arrival_date }}",
+            departure_date: "{{ travel_plan.departure_date }}",
+            user_email: "{{ travel_plan.user_email }}"
+        });
+
+        fetch(`${baseUrl}/plan/{{ travel_plan.id }}`, { method: "PUT", body: requestBody })
+            .then(response => {
+                if (!response.ok) {
+                    throw Error(response.statusText)
+                }
+
+                const successMessageDiv = document.createElement("div");
+                successMessageDiv.id = "success";
+                successMessageDiv.textContent = "Successfully updated";
+                document.body.appendChild(successMessageDiv);
+
+                setTimeout(() => {
+                    successMessageDiv.parentNode.removeChild(successMessageDiv);
+                }, 1500)
+            })
+            .catch(error => {
+                addErrorMessage("Failed to update.", error);
+            });
+    });
+
+    function addErrorMessage(text, error) {
+        let errorMessageDiv = document.getElementById("error");
+                
+        if (errorMessageDiv == null) {
+            errorMessageDiv = document.createElement("div");
+            errorMessageDiv.id = "error";
+            errorMessageDiv.textContent = `${text} ${error}`;
+            document.body.appendChild(errorMessageDiv);
+        } else {
+            errorMessageDiv.textContent = `${text} ${error}`;
+        }
+    }
 });
 </script>
 {% endblock %}
@@ -32,9 +74,16 @@ document.addEventListener("DOMContentLoaded", () => {
     <div>
         <a href="{{ url_for('get_travel_plans') }}">Travel plans</a>
     </div>
-    <h1>{{ travel_plan.title }}</h1>
-    <p>{{ travel_plan.description }}</p>
     <div>
+        <label for="travel_plan_title">Title</label>
+        <input type="text" name="travel_plan_title" id="travel_plan_title" value="{{ travel_plan.title }}">
+    </div>
+    <div>
+        <label for="travel_plan_desc">Description</label>
+        <textarea name="travel_plan_desc" id="travel_plan_desc" cols="30" rows="10">{{ travel_plan.description }}</textarea>
+    </div>
+    <div>
+        <button id="updateButton" type="button">Update</button>
         <button id="deleteButton" type="button">Delete</button>
     </div>
 {% endblock %}

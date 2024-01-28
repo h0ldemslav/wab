@@ -10,3 +10,14 @@ class GoogleToken(BaseModel):
     id_token: str
     expires_at: int
     userinfo: UserInfo
+
+class TravelPlan(BaseModel):
+    id: str
+    title: str
+    description: str 
+    location_name: str | None = None,
+    location_lat: float | None = None, 
+    location_long: float | None = None, 
+    arrival_date: int | None = None,
+    departure_date: int | None = None, 
+    user_email: str

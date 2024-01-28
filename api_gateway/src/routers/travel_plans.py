@@ -1,5 +1,7 @@
+import json
 import grpc
-from grpc_output.itinerary_pb2 import Token, UserInfo, TokenWithTravelPlan, TravelPlan, TokenWithTravelPlanId
+import models
+from grpc_output import itinerary_pb2
 from grpc_output.itinerary_pb2_grpc import ItineraryServiceStub
 from typing import Annotated
 from starlette import status
@@ -31,12 +33,12 @@ async def get_travel_plans(request: Request):
 
         try:
             response = stub.GetTravelPlans(
-                Token(
+                itinerary_pb2.Token(
                     access_token=google_token.access_token,
                     token_type=google_token.token_type,
                     id_token=google_token.id_token,
                     expires_at=google_token.expires_at,
-                    userinfo=UserInfo(
+                    userinfo=itinerary_pb2.UserInfo(
                         email=google_token.userinfo.email, 
                         name=google_token.userinfo.name
                     )
@@ -63,13 +65,13 @@ async def get_travel_plan_by_id(request: Request, id: str):
 
         try:
             response = stub.GetTravelPlanById(
-                TokenWithTravelPlanId(
-                    token=Token(
+                itinerary_pb2.TokenWithTravelPlanId(
+                    token=itinerary_pb2.Token(
                         access_token=google_token.access_token,
                         token_type=google_token.token_type,
                         id_token=google_token.id_token,
                         expires_at=google_token.expires_at,
-                        userinfo=UserInfo(
+                        userinfo=itinerary_pb2.UserInfo(
                             email=google_token.userinfo.email, 
                             name=google_token.userinfo.name
                         )
@@ -98,13 +100,13 @@ async def delete_travel_plan(request: Request, id: str):
 
         try:
             stub.DeleteTravelPlanById(
-                TokenWithTravelPlanId(
-                    token=Token(
+                itinerary_pb2.TokenWithTravelPlanId(
+                    token=itinerary_pb2.Token(
                         access_token=google_token.access_token,
                         token_type=google_token.token_type,
                         id_token=google_token.id_token,
                         expires_at=google_token.expires_at,
-                        userinfo=UserInfo(
+                        userinfo=itinerary_pb2.UserInfo(
                             email=google_token.userinfo.email, 
                             name=google_token.userinfo.name
                         )
@@ -114,6 +116,51 @@ async def delete_travel_plan(request: Request, id: str):
             )
             
             return RedirectResponse(url=routes["base"], status_code=status.HTTP_303_SEE_OTHER)
+        except grpc.RpcError:
+            raise HTTPException(status_code=401)
+
+@router.put(routes["travel_plan_by_id"])
+async def update_travel_plan(request: Request, id: str):
+    google_token = get_google_token_from_cookie(request)
+
+    if not google_token:
+        raise HTTPException(401)
+
+    try:
+        travel_plan_dict = await request.json()
+        travel_plan: models.TravelPlan = models.TravelPlan.model_validate(travel_plan_dict)
+    except (json.JSONDecodeError, ValueError):
+        raise HTTPException(400)
+
+    with grpc.insecure_channel("localhost:50051") as channel:
+        stub = ItineraryServiceStub(channel)
+
+        try:
+            stub.UpdateTravelPlanById(
+                itinerary_pb2.TokenWithTravelPlan(
+                    token=itinerary_pb2.Token(
+                        access_token=google_token.access_token,
+                        token_type=google_token.token_type,
+                        id_token=google_token.id_token,
+                        expires_at=google_token.expires_at,
+                        userinfo=itinerary_pb2.UserInfo(
+                            email=google_token.userinfo.email, 
+                            name=google_token.userinfo.name
+                        )
+                    ),
+                    travel_plan=itinerary_pb2.TravelPlan(
+                        id=id,
+                        title=travel_plan.title,
+                        description=travel_plan.description,
+                        location_name=travel_plan.location_name,
+                        location_lat=travel_plan.location_lat,
+                        location_long=travel_plan.location_long,
+                        arrival_date=travel_plan.arrival_date,
+                        departure_date=travel_plan.departure_date,
+                        user_email=travel_plan.user_email
+                    )
+                )
+            )
         except grpc.RpcError:
             raise HTTPException(status_code=401)
 
@@ -142,24 +189,24 @@ async def create_travel_plan(
 
     with grpc.insecure_channel("localhost:50051") as channel:
         stub = ItineraryServiceStub(channel)
-        travel_plan = TravelPlan(
+        travel_plan = itinerary_pb2.TravelPlan(
             title=title,
             description=desc,
             user_email=google_token.userinfo.email
         )
-        token = Token(
+        token = itinerary_pb2.Token(
             access_token=google_token.access_token,
             token_type=google_token.token_type,
             id_token=google_token.id_token,
             expires_at=google_token.expires_at,
-            userinfo=UserInfo(
+            userinfo=itinerary_pb2.UserInfo(
                 email=google_token.userinfo.email, 
                 name=google_token.userinfo.name
             )
         )
 
         try:
-            stub.CreateTravelPlan(TokenWithTravelPlan(
+            stub.CreateTravelPlan(itinerary_pb2.TokenWithTravelPlan(
                 token=token, 
                 travel_plan=travel_plan
             ))

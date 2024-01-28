@@ -101,3 +101,37 @@ class DbClient:
             )
 
             self.conn.commit()
+    
+    def update_travel_plan(self, travel_plan: TravelPlan) -> TravelPlan:
+        with self.conn.cursor() as cursor:
+            cursor.execute(
+                """
+                UPDATE travel_plans 
+                SET 
+                    id=%s,
+                    title=%s, 
+                    description=%s,
+                    location_name=%s,
+                    location_lat=%s,
+                    location_long=%s,
+                    arrival_date=%s,
+                    departure_date=%s, 
+                    user_email=%s
+                WHERE id=%s
+                """,
+                (
+                    travel_plan.id, 
+                    travel_plan.title, 
+                    travel_plan.description, 
+                    travel_plan.location_name,
+                    travel_plan.location_lat,
+                    travel_plan.location_long,
+                    travel_plan.arrival_date,
+                    travel_plan.departure_date,
+                    travel_plan.user_email,
+
+                    travel_plan.id
+                )
+            )
+
+            self.conn.commit()
