@@ -2,7 +2,7 @@ import httpx
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
-from utils import get_google_token_from_json
+from utils import get_google_token_from_cookie
 
 router = APIRouter()
 templates = Jinja2Templates(directory="src/templates")
@@ -22,9 +22,8 @@ cookies_keys = {
 
 @router.get(api_gateway_routes["base"])
 async def root(request: Request):
-    google_token_json = request.cookies.get(cookies_keys["google_token"])
-    google_token = get_google_token_from_json(google_token_json)
-    
+    google_token = get_google_token_from_cookie(request)
+
     if google_token:
         return RedirectResponse(url=api_gateway_routes["home"])
 
@@ -36,8 +35,7 @@ async def root(request: Request):
 
 @router.get(api_gateway_routes["home"])
 async def home(request: Request):
-    google_token_json = request.cookies.get(cookies_keys["google_token"])
-    google_token = get_google_token_from_json(google_token_json)
+    google_token = get_google_token_from_cookie(request)
 
     if not google_token:
         return RedirectResponse(url=api_gateway_routes["base"])
@@ -49,11 +47,10 @@ async def home(request: Request):
 
 @router.get(api_gateway_routes["logout"])
 async def logout(request: Request):
-    google_token_json = request.cookies.get(cookies_keys["google_token"])
-    google_token = get_google_token_from_json(google_token_json)
+    google_token = get_google_token_from_cookie(request)
 
     if not google_token:
-        raise HTTPException(status_code=400, detail="Fail to logout: invalid cookie")
+        return RedirectResponse(url=api_gateway_routes["base"])
 
     async with httpx.AsyncClient() as client:
         try:
@@ -65,6 +62,6 @@ async def logout(request: Request):
             raise HTTPException(status_code=response.status_code, detail=response.content.decode("utf-8"))
 
         redirect = RedirectResponse(url=api_gateway_routes["base"])
-        redirect.delete_cookie(cookies_keys["google_token"])
+        redirect.delete_cookie(cookies_keys.get("google_token", ""))
 
         return redirect

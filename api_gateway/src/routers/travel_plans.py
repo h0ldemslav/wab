@@ -6,7 +6,7 @@ from starlette import status
 from fastapi import APIRouter, Request, HTTPException, Form
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
-from models import GoogleToken
+from utils import get_google_token_from_cookie
 
 router_prefix = "/travel_plans"
 router = APIRouter(prefix=router_prefix)
@@ -18,23 +18,13 @@ routes = {
     "travel_plan_by_id": "/plan/{id}",
     "login": "http://127.0.0.1:8000"
 }
-cookies_keys = {
-    "google_token": "google_token"
-}
-
-def get_cookie_token(request: Request) -> GoogleToken:
-    google_token_json = request.cookies.get(cookies_keys.get("google_token", None))
-
-    try:
-        google_token = GoogleToken.model_validate_json(google_token_json)
-    except ValueError:
-        raise HTTPException(401)
-
-    return google_token 
 
 @router.get(routes["base"])
 async def get_travel_plans(request: Request):
-    google_token = get_cookie_token(request)
+    google_token = get_google_token_from_cookie(request)
+
+    if not google_token:
+        raise HTTPException(status_code=401)
 
     with grpc.insecure_channel("localhost:50051") as channel:
         stub = ItineraryServiceStub(channel)
@@ -63,7 +53,10 @@ async def get_travel_plans(request: Request):
 
 @router.get(routes["travel_plan_by_id"])
 async def get_travel_plan_by_id(request: Request, id: str):
-    google_token = get_cookie_token(request)
+    google_token = get_google_token_from_cookie(request)
+
+    if not google_token:
+        raise HTTPException(status_code=401)
     
     with grpc.insecure_channel("localhost:50051") as channel:
         stub = ItineraryServiceStub(channel)
@@ -95,7 +88,10 @@ async def get_travel_plan_by_id(request: Request, id: str):
 
 @router.delete(routes["travel_plan_by_id"])
 async def delete_travel_plan(request: Request, id: str):
-    google_token = get_cookie_token(request)
+    google_token = get_google_token_from_cookie(request)
+
+    if not google_token:
+        raise HTTPException(status_code=401)
 
     with grpc.insecure_channel("localhost:50051") as channel:
         stub = ItineraryServiceStub(channel)
@@ -123,7 +119,10 @@ async def delete_travel_plan(request: Request, id: str):
 
 @router.get(routes["new"])
 async def create_travel_plan(request: Request):
-    google_token = get_cookie_token(request)
+    google_token = get_google_token_from_cookie(request)
+
+    if not google_token:
+        raise HTTPException(status_code=401)
     
     return templates.TemplateResponse(
         request=request, 
@@ -136,7 +135,10 @@ async def create_travel_plan(
     title: Annotated[str, Form()], 
     desc: Annotated[str, Form()]
 ):
-    google_token = get_cookie_token(request)
+    google_token = get_google_token_from_cookie(request)
+
+    if not google_token:
+        raise HTTPException(status_code=401)
 
     with grpc.insecure_channel("localhost:50051") as channel:
         stub = ItineraryServiceStub(channel)
